@@ -1,0 +1,6 @@
+# Default ignored files
+/.idea
+/docs/.ignore/*
+/build
+/shelf/
+/workspace.xml
