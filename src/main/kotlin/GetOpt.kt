@@ -13,7 +13,7 @@ import java.security.InvalidParameterException
  * @see <a href="https://docs.python.org/3.8/library/getopt.html"> getopt </a>
  *
  * @author  Hank Adler
- * @version 0.1.0
+ * @version 0.2.0
  * @license MIT
  */
 object GetOpt {
@@ -35,18 +35,17 @@ object GetOpt {
      *                  Example: "hri:" is used to interpret '-h', '-r' and '-i <value>'.
      * @param longOpts  List of words that represent long options.
      *                  Example: ["help", "some-option="] is used to interpret '--help', '--some-option <value>'.
-     * @return          A arguments-options pair, where arguments is a list reduced to non-optional values
-     *                  (required arguments) and options is a map of optional arguments (long or short) and their
-     *                  values, if any.
+     * @return          A options-arguments pair, where options is a map of optional arguments (long or short) and their
+     *                  values (if any), and arguments is a list reduced to non-optional values (required arguments).
      */
     fun getOpt(
         args: List<String>,
         shortOpts: String,
         longOpts: List<String> = emptyList()
-    ): Pair<List<String>, Map<String, String?>> {
+    ): Pair<Map<String, String?>, List<String>> {
         /* Initializes return values. */
-        val arguments = args.toMutableList()  // This will be subsequently mutated to contain required arguments only.
         val options = mutableMapOf<String, String?>()
+        val arguments = args.toMutableList()  // This will be subsequently mutated to contain required arguments only.
 
         /* Validates parameters. */
         screenLongOpts(longOpts)
@@ -102,7 +101,7 @@ object GetOpt {
             }
         }
 
-        return arguments.toList() to options.toMap()
+        return options.toMap() to arguments.toList()
     }
 
     /**
