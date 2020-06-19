@@ -1,42 +1,74 @@
 import com.hankadler.io.GetOpt
 
 fun main() {
-    println("\n--- Test screenShortOpts() ---")
-    println(GetOpt.screenShortOpts("h"))
-    println(GetOpt.screenShortOpts("rf"))
-    println(GetOpt.screenShortOpts("rfi:"))
-    println(GetOpt.screenShortOpts(":"))
+    var argv: Array<String>
+    var shortOpts: String
+    var longOpts: List<String>
 
-    println("\n--- Test screenLongOpts() ---")
-    println(GetOpt.screenLongOpts(listOf("help")))
-    println(GetOpt.screenLongOpts(listOf("recursive", "long-option")))
-    println(GetOpt.screenLongOpts(listOf("recursive", "long-option", "with-value=")))
-    //println(GetOpt.screenLongOpts(listOf("-")))
-    //println(GetOpt.screenLongOpts(listOf("l")))
-    //println(GetOpt.screenLongOpts(listOf("-long-option")))
-    //println(GetOpt.screenLongOpts(listOf("long-option=a")))
-    //println(GetOpt.screenLongOpts(listOf("long-option==")))
+    shortOpts = "rfi:"
+    testParseShortOpts(shortOpts)
 
-    println("\n--- Test getOpt() ---")
-    var args: String
+    // Good
+    longOpts = listOf("long", "long-opt=", "ll")
+    testParseLongOpts(longOpts)
 
-    args = "arg1 arg2"
-    println("\nargs: $args")
-    println(GetOpt.getOpt(args.split(" "), "h"))
+    // Bad
+    longOpts = listOf("long ", "0long", "a", "long-", "--", "long-option-=")
+    for (opt in longOpts) {
+        testParseLongOpts(listOf(opt))
+    }
 
-    args = "-h "
-    println("\nargs: $args")
-    println(GetOpt.getOpt(args.split(" "), "h"))
+    // Case 01
+    shortOpts = "hrfi:Hw:"
+    longOpts = listOf("help", "recursive", "force", "input=", "human-readable", "with-value=")
+    argv = arrayOf("-r", "--force", "-ipepe.txt", "papo", "-H", "-w", "some list", "arg1", "arg2")
+    testGetOpt(argv, shortOpts, longOpts)
 
-    args = "-i pepe.txt --long-option papo pipo"
-    println("\nargs: $args")
-    println(GetOpt.getOpt(args.split(" "), "i:", listOf("long-option=")))
+    // Case 02
+    shortOpts = "h:ri:"
+    longOpts = listOf("help", "recursive", "input=", "with-value=")
+    argv = arrayOf("-r", "-ipepe.txt", "papo", "arg1", "arg2")
+    testGetOpt(argv, shortOpts, longOpts)
 
-    args = "-i pepe.txt -r --long-option papo pipo"
-    println("\nargs: $args")
-    println(GetOpt.getOpt(args.split(" "), "i:r", listOf("long-option=")))
+    // Case 03
+    shortOpts = "hi:"
+    longOpts = listOf("help", "input=", "with-value=")
+    arrayOf("-r", "-ipepe.txt", "papo", "arg1", "arg2")
+    testGetOpt(argv, shortOpts, longOpts)
+}
 
-    args = "-i pepe.txt --recursive --long-option papo --some-flag pipo"
-    println("\nargs: $args")
-    println(GetOpt.getOpt(args.split(" "), "i:r", listOf("long-option=", "recursive", "some-flag")))
+fun testGetOpt(argv: Array<String>, shortOpts: String, longOpts: List<String>) {
+    println("\n--- Test: getOpt() ---")
+    println("INPUT")
+    println("         argv: ${argv.toList()}")
+    println("    shortOpts: $shortOpts")
+    println("     longOpts: $longOpts")
+
+    val (opts, args) = GetOpt.getOpt(argv, shortOpts, longOpts)
+
+    println("OUTPUT")
+    println("    opts: $opts")
+    println("    args: ${args.toList()}")
+}
+
+fun testParseShortOpts(shortOpts: String) {
+    println("\n--- Test: parseShortOpts() ---")
+    println("INPUT")
+    println("    shortOpts: $shortOpts")
+    println("OUTPUT")
+    println("    " + GetOpt.parseShortOpts(shortOpts))
+}
+
+fun testParseLongOpts(longOpts: List<String>): Boolean {
+    println("\n--- Test: areLongOptsValid() ---")
+    println("INPUT")
+    println("    longOpts: $longOpts")
+    println("OUTPUT")
+    return try {
+        println("    " + GetOpt.parseLongOpts(longOpts))
+        true
+    } catch (e: Exception) {
+        println("    " + e.message)
+        false
+    }
 }
