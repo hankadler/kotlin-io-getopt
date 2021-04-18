@@ -30,7 +30,7 @@ dependencies {
 
 Source:
 ```kotlin
-// ConsoleExample.kt
+// GetOptExample.kt
 
 import com.hankadler.io.GetOpt
 
