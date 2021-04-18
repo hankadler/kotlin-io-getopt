@@ -47,7 +47,7 @@ fun main(argv: Array<String>) {
 
 ```
 
-Run:
+Run with arguments: login -u "Jonh Smith" -p "abcdefg"
 ```
 Command-line argv:
     login
