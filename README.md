@@ -1,4 +1,4 @@
-# kotlin-io-getopt
+# kt-getopt
 
 C-style parser for command-line options.
 
